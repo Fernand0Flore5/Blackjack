@@ -19,9 +19,10 @@ class Mazo:                                                                     
         return self.cartas.pop()                                                               # Devuelve la carta superior del mazo (carta aleatoria) y la elimina del mazo
 
 class Jugador:
-    def __init__(self, nombre):                                                                # Constructor de la clase Jugador, se llama al crear un nuevo jugador, establece el nombre del jugador y crea una lista para sus cartas
+    def __init__(self, nombre, saldo_inicial = 1000):                                                                # Constructor de la clase Jugador, se llama al crear un nuevo jugador, establece el nombre del jugador y crea una lista para sus cartas
         self.nombre = nombre
         self.cartas = []
+        self.saldo = saldo_inicial
 
     def recibir_carta(self, carta):                                                            # Añade una carta a la lista de cartas del jugador
         self.cartas.append(carta)
@@ -65,21 +66,20 @@ class Blackjack:
         self.jugador = Jugador("Jugador")                                                     # Constructor de la clase Blackjack, Crea una instancia de Mazo, y dos instancias de jugador y crupier
         self.crupier = Jugador("Crupier")
 
-    def repartir_cartas_iniciales(self):                                                      # Reparte dos cartas a cada jugador al inicio del juego
-        self.jugador.apuesta = 0
+    def repartir_cartas_iniciales(self):
+    self.jugador.apuesta = 0
 
-        # Realizar apuesta del jugador
-        while True:
-            try:
-                apuesta = int(input(f"{self.jugador.nombre}, ¿cuánto quieres apostar? (Saldo actual: {self.jugador.saldo}): "))
-                if 0 < apuesta <= self.jugador.saldo:
-                    self.jugador.apuesta = apuesta
-                    self.jugador.saldo -= apuesta
-                    break
-                else:
-                    print("Cantidad no válida. Asegúrate de tener suficiente saldo.")
-            except ValueError:
-                print("Por favor, ingresa una cantidad válida.")
+    while True:
+        try:
+            apuesta = int(input(f"{self.jugador.nombre}, ¿cuánto quieres apostar? (Saldo actual: {self.jugador.saldo}): "))
+            if 0 < apuesta <= self.jugador.saldo:
+                self.jugador.apuesta = apuesta
+                self.jugador.saldo -= apuesta
+                break
+            else:
+                print("Cantidad no válida. Asegúrate de tener suficiente saldo.")
+        except ValueError:
+            print("Por favor, ingresa una cantidad válida.")
                 
         for _ in range(2):
             carta_jugador = self.mazo.dar_carta()

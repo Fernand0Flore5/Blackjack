@@ -66,6 +66,21 @@ class Blackjack:
         self.crupier = Jugador("Crupier")
 
     def repartir_cartas_iniciales(self):                                                      # Reparte dos cartas a cada jugador al inicio del juego
+        self.jugador.apuesta = 0
+
+        # Realizar apuesta del jugador
+        while True:
+            try:
+                apuesta = int(input(f"{self.jugador.nombre}, ¿cuánto quieres apostar? (Saldo actual: {self.jugador.saldo}): "))
+                if 0 < apuesta <= self.jugador.saldo:
+                    self.jugador.apuesta = apuesta
+                    self.jugador.saldo -= apuesta
+                    break
+                else:
+                    print("Cantidad no válida. Asegúrate de tener suficiente saldo.")
+            except ValueError:
+                print("Por favor, ingresa una cantidad válida.")
+                
         for _ in range(2):
             carta_jugador = self.mazo.dar_carta()
             self.jugador.recibir_carta(carta_jugador)
@@ -122,13 +137,17 @@ class Blackjack:
                     print("Has perdido.")
                 elif crupier_puntaje > 21 or jugador_puntaje > crupier_puntaje:
                     print("¡Felicidades! Has ganado.")
+                    self.jugador.saldo += self.jugador.apuesta * 2
                 elif jugador_puntaje == crupier_puntaje:                                       # Determinar el resultado del juego
                     print("Empate.")
+                    self.jugador.saldo += self.jugador.apuesta
                 else:
                     print("Has perdido.")
                 break
             else:
                 print("Opción no válida. Por favor, ingresa 's' o 'n'.")
+                
+        print(f"Saldo actual de {self.jugador.nombre}: {self.jugador.saldo}")
 
     def reiniciar_juego(self):
         self.mazo = Mazo()
@@ -141,5 +160,10 @@ if __name__ == "__main__":                                                      
     juego.jugar()
 
     while input("¿Quieres jugar de nuevo? (s/n): ").lower() == 's':
+        if  self.jugador.saldo == 0:
+                
+            print("Te has quedado sin dinero. ¡Gracias por jugar!")
+            break
+         
         print("")
         juego.reiniciar_juego()

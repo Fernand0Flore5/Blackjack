@@ -19,10 +19,9 @@ class Mazo:                                                                     
         return self.cartas.pop()                                                               # Devuelve la carta superior del mazo (carta aleatoria) y la elimina del mazo
 
 class Jugador:
-    def __init__(self, nombre, saldo_inicial = 1000):                                                                # Constructor de la clase Jugador, se llama al crear un nuevo jugador, establece el nombre del jugador y crea una lista para sus cartas
+    def __init__(self, nombre):                                                                # Constructor de la clase Jugador, se llama al crear un nuevo jugador, establece el nombre del jugador y crea una lista para sus cartas
         self.nombre = nombre
         self.cartas = []
-        self.saldo = saldo_inicial
 
     def recibir_carta(self, carta):                                                            # Añade una carta a la lista de cartas del jugador
         self.cartas.append(carta)
@@ -66,21 +65,7 @@ class Blackjack:
         self.jugador = Jugador("Jugador")                                                     # Constructor de la clase Blackjack, Crea una instancia de Mazo, y dos instancias de jugador y crupier
         self.crupier = Jugador("Crupier")
 
-    def repartir_cartas_iniciales(self):
-    self.jugador.apuesta = 0
-
-    while True:
-        try:
-            apuesta = int(input(f"{self.jugador.nombre}, ¿cuánto quieres apostar? (Saldo actual: {self.jugador.saldo}): "))
-            if 0 < apuesta <= self.jugador.saldo:
-                self.jugador.apuesta = apuesta
-                self.jugador.saldo -= apuesta
-                break
-            else:
-                print("Cantidad no válida. Asegúrate de tener suficiente saldo.")
-        except ValueError:
-            print("Por favor, ingresa una cantidad válida.")
-                
+    def repartir_cartas_iniciales(self):                                                      # Reparte dos cartas a cada jugador al inicio del juego
         for _ in range(2):
             carta_jugador = self.mazo.dar_carta()
             self.jugador.recibir_carta(carta_jugador)
@@ -137,17 +122,13 @@ class Blackjack:
                     print("Has perdido.")
                 elif crupier_puntaje > 21 or jugador_puntaje > crupier_puntaje:
                     print("¡Felicidades! Has ganado.")
-                    self.jugador.saldo += self.jugador.apuesta * 2
                 elif jugador_puntaje == crupier_puntaje:                                       # Determinar el resultado del juego
                     print("Empate.")
-                    self.jugador.saldo += self.jugador.apuesta
                 else:
                     print("Has perdido.")
                 break
             else:
                 print("Opción no válida. Por favor, ingresa 's' o 'n'.")
-                
-        print(f"Saldo actual de {self.jugador.nombre}: {self.jugador.saldo}")
 
     def reiniciar_juego(self):
         self.mazo = Mazo()
@@ -160,10 +141,5 @@ if __name__ == "__main__":                                                      
     juego.jugar()
 
     while input("¿Quieres jugar de nuevo? (s/n): ").lower() == 's':
-        if  self.jugador.saldo == 0:
-                
-            print("Te has quedado sin dinero. ¡Gracias por jugar!")
-            break
-         
         print("")
         juego.reiniciar_juego()

@@ -7,11 +7,11 @@ class Carta:                                                                    
 
         
     def __str__(self):
-        return f"{self.valor} de {self.palo}"                                               # Función especial llamada cuando se intenta convertir una carta a cadena, devuelve una representación en cadena de la carta, incluyendo su valor y palo
+        return f"{self.valor}{self.palo}"                                                   # Función especial llamada cuando se intenta convertir una carta a cadena, devuelve una representación en cadena de la carta, incluyendo su valor y palo
 
 class Mazo:                                                                                 #Se define la clase Mazo
     def __init__(self):
-        palos = ['Corazones', 'Diamantes', 'Picas', 'Tréboles']      
+        palos = ['♥', '◆', '♠', '♣']      
         valores = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']        # Constructor de la clase Mazo, crea un mazo de cartas, baraja las cartas y las guarda en el atributo cartas
         self.cartas = [Carta(valor, palo) for palo in palos for valor in valores]
         random.shuffle(self.cartas)

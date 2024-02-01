@@ -44,6 +44,20 @@ class Jugador:
             ases -= 1
 
         return puntaje
+    
+    def elegir_valor_ases(self):
+        for i, carta in enumerate(self.cartas):
+            if carta.valor == 'A':
+                while True:
+                    try:
+                        valor_as = int(input(f"¿Qué valor quieres para el As en {carta.palo}? (1/11): "))
+                        if valor_as in [1, 11]:
+                            self.cartas[i].valor = str(valor_as)
+                            break
+                        else:
+                            print("Por favor, ingresa 1 o 11.")
+                    except ValueError:
+                        print("Por favor, ingresa un número válido.")
 
 class Blackjack:
     def __init__(self):
@@ -53,8 +67,13 @@ class Blackjack:
 
     def repartir_cartas_iniciales(self):
         for _ in range(2):
-            self.jugador.recibir_carta(self.mazo.dar_carta())
-            self.crupier.recibir_carta(self.mazo.dar_carta())
+            carta_jugador = self.mazo.dar_carta()
+            self.jugador.recibir_carta(carta_jugador)
+            carta_crupier = self.mazo.dar_carta()
+            self.crupier.recibir_carta(carta_crupier)
+
+        self.jugador.elegir_valor_ases()  # Nueva línea
+        self.crupier.elegir_valor_ases()  # Nueva línea
 
     def mostrar_cartas(self, jugador, ocultar_primera=False):
         cartas = jugador.cartas if not ocultar_primera else [jugador.cartas[0], '???']
@@ -71,8 +90,15 @@ class Blackjack:
             opcion = input("¿Quieres tomar otra carta? (s/n): ").lower()
 
             if opcion == 's':
-                self.jugador.recibir_carta(self.mazo.dar_carta())
+
+                nueva_carta = self.mazo.dar_carta()
+                self.jugador.recibir_carta(nueva_carta)
+                self.jugador.elegir_valor_ases()  # Llamar después de recibir cada nueva carta
                 self.mostrar_cartas(self.jugador)
+
+                if self.jugador.calcular_puntaje() > 21:
+                    print("¡Te has pasado de 21! Has perdido.")
+                    break
 
                 puntaje_jugador = self.jugador.calcular_puntaje()
 
@@ -83,14 +109,20 @@ class Blackjack:
                 else:
                     print("EXCELENTE DECISIÓN")
                     print(". Has recibido:", self.jugador.cartas[-1])
+
             elif opcion == 'n':
                 while self.crupier.calcular_puntaje() < 17:
                     self.crupier.recibir_carta(self.mazo.dar_carta())
                 self.mostrar_cartas(self.crupier)
 
-                if self.crupier.calcular_puntaje() > 21 or self.jugador.calcular_puntaje() > self.crupier.calcular_puntaje():
+                jugador_puntaje = self.jugador.calcular_puntaje()
+                crupier_puntaje = self.crupier.calcular_puntaje()
+
+                if jugador_puntaje > 21:
+                    print("Has perdido.")
+                elif crupier_puntaje > 21 or jugador_puntaje > crupier_puntaje:
                     print("¡Felicidades! Has ganado.")
-                elif self.jugador.calcular_puntaje() == self.crupier.calcular_puntaje():
+                elif jugador_puntaje == crupier_puntaje:
                     print("Empate.")
                 else:
                     print("Has perdido.")
@@ -98,6 +130,16 @@ class Blackjack:
             else:
                 print("Opción no válida. Por favor, ingresa 's' o 'n'.")
 
+    def reiniciar_juego(self):
+        self.mazo = Mazo()
+        self.jugador = Jugador("Jugador")
+        self.crupier = Jugador("Crupier")
+        self.jugar()
+
 if __name__ == "__main__":
     juego = Blackjack()
     juego.jugar()
+
+    while input("¿Quieres jugar de nuevo? (s/n): ").lower() == 's':
+        print("")
+        juego.reiniciar_juego()
